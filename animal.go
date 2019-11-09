@@ -4,7 +4,7 @@ package Config
 /* 
 		export from animal.json by tool.
 */
-type	TAnimal	 struct {
+type	TAnimalBase	 struct {
 	Id	int32`json:"id"`
 	Xnq	string`json:"xnq"`
 	Cat	string`json:"cat"`
@@ -14,6 +14,16 @@ type	TAnimal	 struct {
 
 
 type	TAnimalConfig	 struct {
+}
+
+type	tArrAnimal	[]*TAnimalBase
+
+var (
+GAnimalConfig	*TAnimalConfig=&TAnimalConfig{}
+)
+
+func init(){
+Config.ParseJson2Cache(GAnimalConfig,&tArrAnimal{},"animal.json")
 }
 
 func (this *TAnimalConfig) ComfireAct(data interface{}) (errlist []string) {

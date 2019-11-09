@@ -162,9 +162,10 @@ def export2File(sheet, dstformat, filter):
 def producefile(struct, filename, rowlist):
     print filename
     gofile = "package Config\n\n\n"
-    gofile += "/* \n" +  "\t\texport from " + struct + ".json" + " by tool.\n*/\n"  
+    JsonFile = struct + ".json"
+    gofile += "/* \n" +  "\t\texport from " + JsonFile + " by tool.\n*/\n"  
     struct = str(struct)
-    fileStruct = "T" + struct.capitalize()
+    fileStruct = "T" + struct.capitalize() + "Base"
     gofile += "type\t" + fileStruct + "\t struct {\n"
     rowidx = 0
     # build structure: type TXXX struct { ... }
@@ -183,6 +184,11 @@ def producefile(struct, filename, rowlist):
     #build struct func:
     configStruct = "T" + struct.capitalize() + "Config"
     gofile += "type\t" + configStruct + "\t struct {\n}\n\n"
+    exUseConf = "G" + struct.capitalize() + "Config"
+    arrStructConf = "tArr" + struct.capitalize() 
+    gofile += "type\t" + arrStructConf + "\t" + "[]*" + fileStruct + "\n\n"
+    gofile += "var (\n" + exUseConf + "\t*" + configStruct + "=" + "&" + configStruct + "{}\n)\n\n"
+    gofile += "func init(){\n" + "Config.ParseJson2Cache(" + exUseConf + "," + "&" + arrStructConf + "{}" + "," + '"' + JsonFile + '"' +")\n}\n\n"
     gofile += "func (this *" + configStruct + ") ComfireAct(data interface{}) (errlist []string) {\n\n\treturn\n}\n\n"
     gofile += "func (this *" + configStruct + ") DataRWAct(data interface{}) (errlist []string) {\n\n\treturn\n}\n\n"
     #build new file for go code.
