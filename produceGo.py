@@ -86,7 +86,7 @@ def export2File(sheet, dstformat, filter):
     rowidx = 0
     rowitemtypes = OrderedDict()
     colitemtypes = OrderedDict()
-    totallimit = expitem['endcol'] - 1
+    totallimit = expitem['endcol']
     for row in rows:
         rowidx = rowidx + 1
         if row[0].value == '':
@@ -117,7 +117,6 @@ def export2File(sheet, dstformat, filter):
             if rowitemtypes.has_key('3') == True and rowidx >= 7:
                 rowdata = rowitemtypes['3']
                 if rowdata.has_key(strcolidx) == True:
-                    totallimit = expitem['endcol'] - 1
                     if len(rowdata) == totallimit and rowdata[strcolidx] == filter:
                         continue
             
