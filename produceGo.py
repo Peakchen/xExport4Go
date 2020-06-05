@@ -182,15 +182,17 @@ def producefile(struct, filename, rowlist):
             gofile += "\n"
 
     #build struct func:
-    configStruct = "T" + struct.capitalize() + "Config"
-    gofile += "type\t" + configStruct + "\t struct {\n}\n\n"
-    exUseConf = "G" + struct.capitalize() + "Config"
+    configStruct = "T" + struct.capitalize()
+    gofile += "type\t" + configStruct + "\t struct {  data []* "+ fileStruct + " \n}\n\n"
+    exUseConf = "\tG" + struct.capitalize()
     arrStructConf = "tArr" + struct.capitalize() 
     gofile += "type\t" + arrStructConf + "\t" + "[]*" + fileStruct + "\n\n"
     gofile += "var (\n" + exUseConf + "\t*" + configStruct + "=" + "&" + configStruct + "{}\n)\n\n"
-    gofile += "func init(){\n" + "Config.ParseJson2Cache(" + exUseConf + "," + "&" + arrStructConf + "{}" + "," + '"' + JsonFile + '"' +")\n}\n\n"
-    gofile += "func (this *" + configStruct + ") ComfireAct(data interface{}) (errlist []string) {\n\n\treturn\n}\n\n"
-    gofile += "func (this *" + configStruct + ") DataRWAct(data interface{}) (errlist []string) {\n\n\treturn\n}\n\n"
+    gofile += "func init(){\n}\n\n"
+    gofile += "func load"+ struct.capitalize() +"() {\n\tvar(\n\t\tpath string\n\t)\n\tif len(SvrPath) == 0 {\n\t\tpath = getserverpath()\n\t} \n\tpath = filepath.Join(SvrPath, "+ '"' + JsonFile + '"' +") \n\t" + "Config.ParseJson2Cache(" + exUseConf + "," + "&" + arrStructConf + "{}" + ", path)\n}\n\n"
+    gofile += "func (this *" + configStruct + ") ComfireAct(data interface{}) (errlist []string) { errlist = []string{} \n\tcfg := data.(*" + arrStructConf + ") \n\tfor _, item := range *cfg {\n\n\t}\n\treturn\n}\n\n"
+    gofile += "func (this *" + configStruct + ") DataRWAct(data interface{}) (errlist []string) {\n\tcfg := data.(*" + arrStructConf + ") \n\tthis.data = []*"+fileStruct+"{}\n\tfor _, item := range *cfg {\n\n\t}\n\treturn\n}\n\n"
+    gofile += "func (this *" + configStruct + ") Get(idx int) *"+fileStruct+"{\n\tif idx >= len(this.data) {\n\t\treturn nil\n\t}\n\treturn this.data[idx]\n}"
     #build new file for go code.
     with codecs.open(filename, "w", "utf-8") as target:
         target.write(gofile)
